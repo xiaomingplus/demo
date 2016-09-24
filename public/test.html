@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+</head>
+
+<body>
+    <div class="list">
+
+    </div>
+    <script src="./zepto.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        // fetch({
+        //
+        // }).then(function(){
+        //
+        // })
+        // func1(function(data) {
+        //     func2('world2', function(result) {
+        //         // console.log(result); // hello world
+        //         func3(data, result, function(r2) {
+        //             console.log(r2); // hello world2 test
+        //         })
+        //     })
+        // });
+        //
+        // function func1(p1) {
+        //     p1()
+        // }
+        //
+        // function func2(p2, p3) {
+        //     p3(p2);
+        //
+        // }
+        //
+        // function func3(p4, p5, p6) {
+        //     p6('hello ' + p5 + ' test')
+        // }
+
+
+        var a ={
+          id:2,
+          zz:2
+        }
+        var b ={
+          c:3
+        }
+
+        var c ={
+          id:a.id,
+          zz:a.zz,
+          c:b.c
+      }
+
+        $.get('http://192.168.0.101:7777/getUserInfo',function(data){
+          $.get(`http://192.168.0.101:7777/getAvatar?id=${data.id}`,function(avatar){
+            var result = Object.assign(data,avatar);
+            console.log(result)
+          })
+        })
+
+    </script>
+</body>
+
+</html>
