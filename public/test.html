@@ -12,55 +12,200 @@
     </div>
     <script src="./zepto.js" charset="utf-8"></script>
     <script type="text/javascript">
-        // fetch({
+        //   // fetch({
+        //   //
+        //   // }).then(function(){
+        //   //
+        //   // })
+        //   // func1(function(data) {
+        //   //     func2('world2', function(result) {
+        //   //         // console.log(result); // hello world
+        //   //         func3(data, result, function(r2) {
+        //   //             console.log(r2); // hello world2 test
+        //   //         })
+        //   //     })
+        //   // });
+        //   //
+        //   // function func1(p1) {
+        //   //     p1()
+        //   // }
+        //   //
+        //   // function func2(p2, p3) {
+        //   //     p3(p2);
+        //   //
+        //   // }
+        //   //
+        //   // function func3(p4, p5, p6) {
+        //   //     p6('hello ' + p5 + ' test')
+        //   // }
+        //
+        //
+        //   var a ={
+        //     id:2,
+        //     zz:2
+        //   }
+        //   var b ={
+        //     c:3
+        //   }
+        //
+        //   var c ={
+        //     id:a.id,
+        //     zz:a.zz,
+        //     c:b.c
+        // }
+        //
+        //   $.get('http://192.168.0.101:7777/getUserInfo',function(data){
+        //     $.get(`http://192.168.0.101:7777/getAvatar?id=${data.id}`,function(avatar){
+        //       var result = Object.assign(data,avatar);
+        //       console.log(result)
+        //     })
+        //   })
+        //
+        // var func1 = function(cb){
+        //   cb('hello')
+        // }
+        //
+        // var func2 = function(cb){
+        //   cb('hello')
+        // }
+        //
+        // var func3 = function(cb){
+        //   cb('hello')
+        // }
+        // var func4 = function(cb){
+        //   cb('hello')
+        // }
+        // var func5 = function(cb){
+        //   cb('hello')
+        // }
+        //
+        // func1(function(err,data){
+        //   console.log(data); //hello
+        //   func2(function(err,data2){
+        //     func3(function(err,data3){
+        //       if(err){
+        //
+        //       }else{
+        //
+        //       }
+        //       func4(function(err,data4){
+        //         func5(function(err,data5){
+        //           console.log(data5)
+        //         });
+        //       })
+        //     })
+        //   })
+        // });
+
+        // p1().then(
+        //   function(){
+        //
+        //   }
+        // ).then(function(){
         //
         // }).then(function(){
         //
+        // }).catch(function(err){
+        //
         // })
-        // func1(function(data) {
-        //     func2('world2', function(result) {
-        //         // console.log(result); // hello world
-        //         func3(data, result, function(r2) {
-        //             console.log(r2); // hello world2 test
-        //         })
-        //     })
+
+        // var p1 = function() {
+        //pending
+        //resolve
+        //reject
+        // return Promise.resolve({
+        //   data:[]
+        // })
+        //     return Promise.reject({
+        //         code: 400,
+        //         msg: "xxxx"
+        //     });
+        // }
+        // p1().then(function(data) {
+        //     console.log(data);
+        //     return {
+        //         xx: 2
+        //     }
+        // }, function(err) {
+        //     console.log(1)
+        //     console.log(err);
+        //     return {
+        //
+        //     }
+        //     // return Promise.reject({
+        //     //
+        //     // })
+        // }).then(function(data) {
+        //     console.log('2')
+        //     console.log(data)
+        //
+        // }, function(err) {
+        //     console.log(err);
+        // }).catch(function(err) {
+        //     console.log(3)
+        //     console.log(err)
+        // })
+
+        // p2(15).then(function(data) {
+        //     console.log(data); // 30
+        //     return data;
+        // }, function(err) {
+        //     console.log(err)
+        // }).then(function(data){
+        //   return p3(data);
+        // }).then(function(data){
+        //   console.log(data); //20
         // });
         //
-        // function func1(p1) {
-        //     p1()
-        // }
-        //
-        // function func2(p2, p3) {
-        //     p3(p2);
+        // function p2(a, b) {
+        //         return Promise.resolve(a * 2);
         //
         // }
-        //
-        // function func3(p4, p5, p6) {
-        //     p6('hello ' + p5 + ' test')
+        // function p3(c){
+        //   return Promise.resolve(c-10)
         // }
+        request("http://localhost:7777/postContent", "POST", {
+            xxx: 22
+        }).then(function(data) {
+            console.log(data);
+        }, function(err) {
+            console.log(err)
+        });
 
+        function request(url, method, body) {
+            if (!method) {
+                method == "GET"
+            }
+            var params = {
+                method: method,
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
 
-        var a ={
-          id:2,
-          zz:2
+            if (method == "POST") {
+                if (body) {
+                    params.body = JSON.stringify(body)
+                }else{
+                  params.body = ""
+                }
+            }
+            return fetch(url, params).then(function(response) {
+                console.log(response);
+                if (response.status >= 200 && response.status < 300) {
+                    return response.json();
+                } else {
+                    return response.json().then(function(data) {
+                        return Promise.reject(data);
+                    })
+                }
+            }, function(err) {
+                return Promise.reject(err);
+            }).then(function(data) {
+                return Promise.resolve(data);
+            });
         }
-        var b ={
-          c:3
-        }
-
-        var c ={
-          id:a.id,
-          zz:a.zz,
-          c:b.c
-      }
-
-        $.get('http://192.168.0.101:7777/getUserInfo',function(data){
-          $.get(`http://192.168.0.101:7777/getAvatar?id=${data.id}`,function(avatar){
-            var result = Object.assign(data,avatar);
-            console.log(result)
-          })
-        })
-
     </script>
 </body>
 

@@ -8,38 +8,92 @@
 </head>
 
 <body>
-    <fieldset style="display:flex;width:50%;border-radius:5px">
+    <fieldset style="display:flex;width:50%;border-radius:5px;margin-bottom:10px">
         <legend>输入留言</legend>
         <textarea class="message" rows="8" cols="40" placeholder="请输入留言内容"></textarea>
         <button type="button" class="submit" style="margin-top:10px">提交留言</button>
     </fieldset>
-    <fieldset class="list" style="display:flex;width:50%;border-radius:5px;margin-top:10px">
-        <legend>留言列表：</legend>
-        <button type="button" class="getList">click！</button>
-
-    </fieldset>
+    <!-- <button type="button" class="getList" style="margin:10px 0">点击获取留言列表</button> -->
+    <div class="listContent" style="width:53%;border-radius:5px;border:1px solid #AAAAAA">
+        <div class="" style="padding:10px"> 留言列表：</div>
+        <div class="list"></div>
+    </div>
 
     <script type="text/javascript">
-        document.querySelector('.getList').addEventListener('click', function() {
-            fetch("http://localhost:7777/list", {
-                method: "GET",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json"
-                }
+        var messageList = [
 
-            }).then(function(response) {
-                console.log(response);
-                if (response.status == 200) {
+        ];
 
-                    // document.querySelector('.list').innerHTML =
-                } else if (response.status == 404) {
+        var renderList = function() {
+            var list = '';
+            console.log(messageList);
+            for (var i = messageList.length-1; i >=0; i--) {
+                list += `<ul><li style="display:flex;justify-content:space-between">${messageList[i].content}<button style="margin:10px">删除</button></li></ul>`;
+            };
+            document.querySelector('.list').innerHTML = list;
+        };
+        renderList();
 
-                }
-            },function(err){
-              console.log(err)
-            })
+        fetch("http://localhost:7777/list", {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json"
+            }
+
+        }).then(function(response) {
+            console.log(response);
+            if (response.status == 200) {
+                return response.json();
+
+            } else if (response.status == 404) {
+                return response.json();
+            }
+        }, function(err) {
+            console.log(err)
+        }).then(function(data) {
+            messageList = data;
+            renderList();
+        });
+
+        document.querySelector('.submit').addEventListener('click', function() {
+            var input = document.querySelector('.message').value;
+            if (input == '') {
+                alert('留言内容不能为空！')
+            } else {
+                fetch("http://localhost:7777/postContent", {
+                    method: "POST",
+                    mode: "cors",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        content: input
+                    })
+
+                }).then(function(response) {
+                    if (response.status == 200) {
+                        return response.json();
+                    } else {
+                        return Promise.reject(res.json())
+                    }
+                }).then(function(data) {
+                    messageList.push({
+                        content: `${document.querySelector('.message').value}`
+                    });
+                    console.log(messageList);
+                    // messageList.reverse();
+                    // console.log(messageList);
+                    renderList();
+                }).catch(function(err) {
+                    console.log(err);
+                });
+            }
         })
+        // 
+        // request('http://xxx.com','post',{xx:2}).then(function(data){
+        //
+        // })
     </script>
 </body>
 
