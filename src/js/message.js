@@ -4,7 +4,7 @@ var data = [];
 var res = {
 
 };
-
+var id = 1000;
 res.json = function(response, obj, status) {
     response.writeHead(status ? status : 200, {
         "Content-Type": "application/json",
@@ -33,10 +33,12 @@ var server = http.createServer(function(request, response) {
                 // console.log(body);
                 var reqBody = JSON.parse(body);
                 if (reqBody.content) {
-                    data.push({
-                        content: reqBody.content,
-                        time: new Date()
-                    });
+                  var item = {
+                      content: reqBody.content,
+                      time: new Date(),
+                      id: id++
+                  }
+                    data.push(item);
                     console.log(data);
                     // response.writeHead(200, {
                     //   "Content-Type": "application/json"
@@ -47,7 +49,8 @@ var server = http.createServer(function(request, response) {
                     // }));
                     // response.end();
                     res.json(response, {
-                        message: "留言成功"
+                        message: "留言成功",
+                        detail:item
                     })
                 } else {
                     // response.writeHead(400, {
@@ -99,15 +102,66 @@ var server = http.createServer(function(request, response) {
                 message: "未找到该方法！"
             }, 404)
         }
-    }else if(request.method==='OPTIONS'){
-      // console.log(request);
-      response.writeHead(204,{
-        "Access-Control-Allow-Origin":"*",
-        "Access-Control-Allow-Headers":"content-type,test",
-        "Access-Control-Allow-Methods":"PUT,POST,GET,DELETE,OPTIONS"
+    } else if (request.method === 'OPTIONS') {
+        // console.log(request);
+        response.writeHead(204, {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "content-type,test",
+            "Access-Control-Allow-Methods": "PUT,POST,GET,DELETE,OPTIONS"
 
-      });
-      response.end();
-    };
+        });
+        response.end();
+    } else if (request.method == 'DELETE') {
+        var deleteUrl = url.parse(request.url, true);
+        if (deleteUrl.pathname == '/message') {
+            var body = '';
+            request.on('data', function(data) {
+                body += data;
+                if (data.length > 1e6) {
+                    request.connection.destroy();
+                }
+            });
+            request.on('end', function() {
+                console.log(body);
+                try {
+                    var reqBody = JSON.parse(body);
+                } catch (e) {
+                    res.json(response, {
+                        message: "json解析失败！"
+                    }, 400);
+                    return;
+
+                }
+                if (reqBody.id) {
+                    var flag = false;
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].id == reqBody.id) {
+                            data.splice(i, 1);
+                            flag = true;
+                        }
+                    }
+
+                    if (!flag) {
+                        res.json(response, {
+                            message: "未找到该id！"
+                        }, 404)
+                    } else {
+                        res.json(response, {
+                            message: "删除成功"
+                        })
+                    }
+                } else {
+                    res.json(response, {
+                        message: "请传入id！"
+                    }, 404)
+                }
+            });
+
+        } else {
+            res.json(response, {
+                message: "请传入body！"
+            }, 400)
+        }
+    }
 })
 server.listen(7777);
