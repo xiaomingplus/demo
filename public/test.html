@@ -187,8 +187,8 @@
             if (method == "POST") {
                 if (body) {
                     params.body = JSON.stringify(body);
-                }else{
-                  params.body = "";
+                } else {
+                    params.body = "";
                 }
             }
             return fetch(url, params).then(function(response) {

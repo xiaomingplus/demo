@@ -1,0 +1,58 @@
+ body {
+     margin: 0;
+     background-color: rgb(22, 160, 133);
+     color: white;
+ }
+
+ .container {
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+ }
+
+ .top {}
+
+ h1 {
+     font-family: Arial;
+     /*font-weight: 500;*/
+     font-size: 70px;
+     line-height: 50px;
+     text-align: center;
+ }
+
+ i {
+     font-style: normal;
+ }
+
+ .c {
+     font-family: Arial;
+     text-align: center;
+     font-size: 30px;
+     line-height: 50px;
+ }
+
+ .convert {
+     background-color: rgb(22, 160, 133);
+     border-style: none;
+     font-size: 30px;
+     cursor: pointer;
+     color: #34495e;
+ }
+
+ .icon {
+     font-size: 80px;
+     line-height: 150px;
+ }
+ .hide{
+   display: none;
+ }
+ .active{
+   display: block;
+ }
+
+ .vividmint {
+     font-size: 18px;
+     line-height: 30px;
+     font-family: Arial;
+     text-align: center;
+ }
