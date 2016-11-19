@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
+    <link rel="stylesheet" href="./assets/font-awesome/css/font-awesome.min.css" media="screen" title="no title">
+    <link rel="stylesheet" href="/stories.css" media="screen" title="no title">
+    <title>stories</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="tag">
+            <div class="top">
+                <div class="story"><i class="fa fa-quote-left"></i></div>
+            </div>
+            <div class="person"></div>
+            <div class="bottom">
+                <button class="twitter"><i class="fa fa-twitter"></i></button>
+                <button class="newStory">New Story</button>
+            </div>
+        </div>
+        <div class="author">by vividmint</div>
+    </div>
+
+
+    <script type="text/javascript">
+        var stories = {};
+        var colors = ["#16a085", "#3498db", "#9b59b6", "#95a5a6", "#f1c40f", "#d35400", "#34495e", "#c0392b"]
+
+        function render() {
+            var i = Math.floor(Math.random() * 8);
+            document.querySelector('.newStory').style.backgroundColor = colors[i];
+            document.body.style.backgroundColor = colors[i];
+            document.querySelector('.twitter').style.backgroundColor = colors[i];
+            document.querySelector('.person').style.color = colors[i];
+            document.querySelector('.top').style.color = colors[i];
+            document.querySelector('.story').innerHTML = `<i class="fa fa-quote-left"></i>${stories.quote}`;
+            document.querySelector('.person').innerHTML = `- ${stories.author}`;
+        }
+
+        document.querySelector('.newStory').addEventListener('click', function() {
+            request("https://andruxnet-random-famous-quotes.p.mashape.com/?cat=movies").then(function(data) {
+                stories.quote = data.quote;
+                stories.author = data.author;
+                stories.category = data.category;
+                console.log(stories);
+                render();
+
+            })
+        });
+
+        // var promise = fetch("https://andruxnet-random-famous-quotes.p.mashape.com/?cat=movies", {
+        //     method: "GET",
+        //     headers: {
+        //         'X-Mashape-Key': 'lYs60WHzYemshQMRaMCm5BBmpNspp1uO0KWjsneUQdIJ9Tvux2',
+        //         'Content-Type': 'application/x-www-form-urlencoded',
+        //         'Accept': 'application/json'
+        //     }
+        // }).then(function(res) {
+        //     console.log(res);
+        //     if (res.status == 200) {
+        //         return res.json();
+        //     } else {
+        //         return;
+        //
+        //     }
+        //
+        // });
+        // promise = promise.then(function(data) {
+        //     //响应的内容
+        //
+        //     console.log(data);
+        // }).catch(function(err) {
+        //     console.log(err);
+        // })
+
+        request("https://andruxnet-random-famous-quotes.p.mashape.com/?cat=movies").then(function(data) {
+            stories.quote = data.quote;
+            stories.author = data.author;
+            stories.category = data.category;
+            console.log(stories);
+            render();
+        })
+
+        function request(url, method, body) {
+            if (!method) {
+                method = 'GET'
+            }
+            var obj = {
+                method: method,
+                mode: "cors",
+                headers: {
+                    'X-Mashape-Key': 'lYs60WHzYemshQMRaMCm5BBmpNspp1uO0KWjsneUQdIJ9Tvux2',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'
+                }
+            }
+            if (method == 'POST' || method == 'DELETE') {
+                obj.body = JSON.stringify(body)
+            }
+            return fetch(url, obj).then(function(response) {
+                console.log(response);
+                if (response.status >= 200 && response.status < 300) {
+                    return response.json();
+                } else {
+                    return response.json();
+                }
+            }, function(err) {
+                console.log(err)
+                return Promise.reject(err);
+            })
+        };
+    </script>
+</body>
+
+</html>

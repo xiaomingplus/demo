@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>
+    </title>
+</head>
+
+<body>
+    <fieldset style="display:flex;width:50%;border-radius:5px;margin-bottom:10px">
+        <legend>输入留言</legend>
+        <textarea class="message" rows="8" cols="40" placeholder="请输入留言内容"></textarea>
+        <button type="button" class="submit" style="margin-top:10px">提交留言</button>
+    </fieldset>
+    <div class="listContent" style="width:53%;border-radius:5px;border:1px solid #AAAAAA">
+        <div class="" style="padding:10px"> 留言列表：</div>
+        <div class="list"></div>
+    </div>
+
+    <script type="text/javascript">
+        var messageList = {};
+        var listId = [];
+        var renderList = function() {
+            var list = '<ul>';
+            console.log(messageList);
+            // for (var i = messageList.length - 1; i >= 0; i--) {
+            //     list += `<ul><li style="display:flex;justify-content:space-between">${messageList[i].content}<button data-set=${messageList[i].id} class="deleteMessage" style="margin:0 10px">删除</button></li></ul>`;
+            // };
+            for (var i =listId.length-1;i>=0;i--) {
+                list += `<li>${messageList[listId[i]].content}<button data-set=${messageList[listId[i]].id} class="deleteMessage" style="margin:0 10px">删除</button></li>`
+            }
+            list += '</ul>';
+            document.querySelector('.list').innerHTML = list;
+        };
+
+        document.querySelector('.submit').addEventListener('click', function() {
+            var input = document.querySelector('.message').value;
+            if (input == '') {
+                alert('留言内容不能为空！')
+            } else {
+                request("http://localhost:7777/postContent", "POST", {
+                    content: input
+                }).then(function(data) {
+                    messageList[data.detail.id] = {
+                        content: input,
+                        id: data.detail.id
+                    };
+                    listId.push(data.detail.id)
+                    console.log(messageList);
+                    renderList();
+                }).catch(function(err) {
+                    console.log(err);
+                });
+            }
+        })
+
+        request('http://localhost:7777/list').then(function(data) {
+            for (var i = 0; i < data.length; i++) {
+               listId.push(data[i].id);
+                messageList[data[i].id] = data[i];
+            }
+            renderList();
+        });
+
+
+        function request(url, method, body) {
+            if (!method) {
+                method = 'GET'
+            }
+            var obj = {
+                method: method,
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+
+            if (method == 'POST' || method == 'DELETE') {
+                obj.body = JSON.stringify(body)
+            }
+            return fetch(url, obj).then(function(response) {
+                console.log(response);
+                if (response.status >= 200 && response.status < 300) {
+                    return response.json();
+
+                } else {
+                    return response.json();
+                }
+            }, function(err) {
+                console.log(err)
+                return Promise.reject(err);
+            })
+        };
+
+        document.querySelector('.list').addEventListener('click', function(e) {
+            if (e.target.className == 'deleteMessage') {
+                console.log(e.target.dataset.set);
+                request('http://localhost:7777/message', "DELETE", {
+                    id: e.target.dataset.set
+                }).then(function() {
+                    for (var i = 0; i < listId.length; i++) {
+                        if (listId[i] == e.target.dataset.set) {
+                            listId.splice(i, 1);
+                        }
+                    }
+                    renderList();
+                })
+            }
+        })
+    </script>
+</body>
+
+</html>
